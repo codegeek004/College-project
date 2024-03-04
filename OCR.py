@@ -48,9 +48,9 @@ class RateCounter:
     def rate(self):
         """Returns the iterations per seconds"""
         elapsed_time = (time.perf_counter() - self.start_time)
-
         return self.iterations/elapsed_time
 
+class VideoStream:
 
 
 
