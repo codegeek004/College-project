@@ -68,7 +68,7 @@ def main():
     OCR.tesseract_location(tess_path)
     OCR.ocr_stream(view_mode = args.view_mode, source = args.src, crop = args.crop, language = args.language)
 
-    if __name__ = '__main__':
+    if __name__ == '__main__':
         main()
 
 
