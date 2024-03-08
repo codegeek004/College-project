@@ -54,6 +54,55 @@ class VideoStream:
     #Class from grabbing frames from cv2 video capture.
     def __init__(self,src=0):
         self.stream = cv2.VideoCapture(src)
+        (self.grabbed, self.frame)=self.stream.read()
+        self.stopped=False
+
+    def start(self):
+    # Creates a thread targeted at get(), which reads frames from CV2 VideoCapture.
+        Thread = (target=self.get, args()).start()
+        return self
+
+    def get(self):
+        #Continuously gets frames from CV2 VideoCapture and sets them as self.frame attribute
+        while not self.stopped:
+            (self.grabbed, self.frame)=self.stream.read()
+
+    def get_video_dimensions(self):
+        #get the dimensions of the video frame
+        width=self.stream.get(cv2.CAR_PROP_FRAME_WIDTH)
+        height=self.stream.get(cv2.CAR_PROP_FRAME_WIDTH)
+        return int(width), int(height)
+    def stop_process(self):
+        self.stopped=True
+
+
+class OCR:
+    #Class for creating a pytesseract OCR process in a dedicated thread
+    
+    def __init__(self):
+        self.boxes=None
+        self.stopped=False
+        self.exchanged=None
+        self.language=None
+        self.width=None
+        self.crop_width=None
+        self.height=None
+        self.crop_height=None
+
+    def start(self):
+        #Creates a thread at OCR process
+        Thread(target=self.ocr, args()).start()
+        return self
+    def set_exchange(self,video_stream):
+        self.exchange=video_stream
+        #Sets the self.exchange attribute with a reference to VideoStream class
+
+
+    def set_language(self,language):
+        self.language=language
+        #Sets the self.language parameter
+
+    def ocr(self):
 
 
 
