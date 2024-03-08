@@ -51,6 +51,10 @@ class RateCounter:
         return self.iterations/elapsed_time
 
 class VideoStream:
+    #Class from grabbing frames from cv2 video capture.
+    def __init__(self,src=0):
+        self.stream = cv2.VideoCapture(src)
+
 
 
 
