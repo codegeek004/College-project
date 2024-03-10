@@ -241,6 +241,17 @@ def put_crop_box(frame: numpy.ndarray, width: int, height: int, crop_width: int,
     return frame
 
 def put_rate(frame: numpy.ndarray, rate: float) ->numpy.ndarray:
+    """
+    Places text showing the iterations per second in the CV2 display loop.
+
+    This is for demonstrating the effects of multi-threading.
+
+    :param frame: CV2 display frame for text destination
+    :param rate: Iterations per second rate to place on image
+    """
+    cv2.putText(frame, "{} Iterations/Second".format(int(rate)),
+                (10,35), cv2.FONT_HERSHEY_DUPLEX, 1.0, (255,255,255))
+    return frame
 
 
 
