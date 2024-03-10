@@ -216,3 +216,20 @@ def put_ocr_boxes(boxes, frame, height, crop_width=0, crop_height=0, view_mode=1
                     x+=crop_width
                     y+=crop_height
 
+                    conf_thresh, color = views(view_mode, int(float(conf)))
+                    if int(float(conf))>conf_thresh:
+                        cv2.rectangle(frame, (x, y), (w + x, h + y), color, thickness=1)
+                        text = text + '' + word
+        
+        if text.isascii():
+            #cv2 is only able to display ascii chars at the moment
+            cv2.putText(frame, text, (5, height-5), cv2.FONT_HERSHEY_DUPLEX, 1, (200,200,200))
+
+    return frame, text
+
+
+
+
+
+
+
