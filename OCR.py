@@ -34,8 +34,9 @@ class RateCounter:
     """
 
     def __init__(self):
+
         self.start_time = None
-        self.iteration = 0;
+        self.iteration = 0
             
     def start(self):
         """Starts a time.perf_counter() and sets it in the self.start_time attribute"""
@@ -252,9 +253,64 @@ def put_rate(frame: numpy.ndarray, rate: float) ->numpy.ndarray:
     cv2.putText(frame, "{} Iterations/Second".format(int(rate)),
                 (10,35), cv2.FONT_HERSHEY_DUPLEX, 1.0, (255,255,255))
     return frame
+def put_language(frame: numpy.ndarray, language_string: str)->numpy.ndarray:
+    """
+    Places text showing the active language(s) in current OCR display
+
+    :param numpy.ndarray frame: CV2 display frame for language name destination
+    :param str language_string: String containing the display language name(s)
+    """
+
+    cv2.putText(frame, language_string,
+                (10,65), cv2.FONT_HERSHLEY_DUPLEX, 1.0, (255,255,255))
+    return frame
+
+def ocr_stream(crop: list[int,int], source: int=0, view_mode: int=1, language=None):
+    """
+    Begins the video stream and text OCR in two threads, then shows the video in a CV2 frame with the OCR
+    boxes overlaid in real-time.
+
+    When viewing the real-time video stream, push 'c' to capture a still image, push 'q' to quit the view session
+
+    :param list[int, int] crop: A two-element list with width, height crop amount in pixels. [0, 0] indicates no crop
+    :param source: SRC video source (defaults to 0) for CV2 video capture.
+    :param int view_mode: There are 4 possible view modes that control how the OCR boxes are drawn over text:
+
+        mode 1: (Default) Draws boxes on text with >75 confidence level
+
+        mode 2: Draws red boxes on low-confidence text and green on high-confidence text
+
+        mode 3: Color changes according to each word's confidence; brighter indicates higher confidence
+
+        mode 4: Draws a box around all detected text regardless of confidence
+
+    :param str language: ISO 639-2/T language code to specify OCR language. Multiple langs can be appended with '+'
+        Defaults to None, which will perform OCR in English.
+
+    """
+    captures=0 # Number of still image captures during view session
+    video_stream=VideoStream(source).start()# Starts reading the video stream in dedicated thread
+    img_wi, img hi=video_stream.get_video_dimensions()
+    if crop is None:
+        cropx, cropy=(200,200)
+    else:
+        cropx, cropy=crop[0], crop[1]
+        if cropx > img_wi or cropy > img_hi or cropx<0 or cropy<0:
+            cropx, cropy = 0, 0
+            print("Impossible crop dimensions supplied. Dimensions reverted to 0 0")
+
+    ocr = OCR().start()#starts optical recognition in dedicated thread
+    print("OCR stream started")
+    print("Active threads: {}".format(threading.activeCount()))
+    ocr.set_exchange(video_stream)
+    ocr.set_language(language)
+    ocr.set_dimensions(img_wi, img_hi, cropx, cropy)
+    cps1=RateCounter().start()
+    lang_name=Linguist.language_string(language)#Creates readable language names from tesseract language code
 
 
-
-
-
+###############---------------Main Display loop------------#########
+print("\nPUSH c TO CAPTURE AN IMAGE. PUSH q TO VIEW VIDEO STREAM\n")
+while True:
+    
 
