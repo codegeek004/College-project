@@ -103,7 +103,7 @@ class OCR:
         #Sets the self.language parameter
 
     def ocr(self):
-
+        
 
 
 
