@@ -103,7 +103,87 @@ class OCR:
         #Sets the self.language parameter
 
     def ocr(self):
+        while not self.stopped:
+            if self.exchange is None:
+                frame=self.exchange.frame
+                frame=cv2.cvtColor(frame,cv2.COLOR_RGB2GRAY)
+                frame=frame[self.crop_height:(self.height-self.crop_height), self.crop_width:(self.width-self.crop_width)]
+                
+
+                self.boxes=pytesseract.image_to_data(frame, lang=self.language)
+
+
+
+    def set_dimensions(self, width, height, crop_width, crop_height):
+        #set the dimensions attributes
+        self.width=width
+        self.height=height
+        self.crop_width=crop_width
+        self.crop_height=crop_height
+
+    def stop_process(self):
+        self.stopped=True
+
+
+def capture_image(frame, capture=0):
+    """
+    Capture a .jpg during CV2 video stream. Saves to a folder /images in working directory.
+
+    :param frame: CV2 frame to save
+    :param captures: (optional) Number of existing captures to append to filename
+    """
+
+    cwd_path=os.getcwd()
+    Path(cwd_path + '/images').mkdir(parents=False, exit_ok=True)
+    now=datetime.now()
+    # Example: "OCR 2021-04-8 at 12:26:21-1.jpg"  ...Handles multiple captures taken in the same second
+    name = OCR + now.strftime("%Y-%D-%M") + "at" + now.strftime("%H:%M:%S") + '-' + str(captures+1) + '.jpg'
+    path = 'images/' + name
+    cv2.imwrite(path,frame)
+    captures+=1
+    print(name)
+    return captures
+
+def views(mode: int,confidence: int):
+     """
+    View modes changes the style of text-boxing in OCR.
+
+    View mode 1: Draws boxes on text with >75 confidence level
+
+    View mode 2: Draws red boxes on low-confidence text and green on high-confidence text
+
+    View mode 3: Color changes according to each word's confidence; brighter indicates higher confidence
+
+    View mode 4: Draws a box around detected text regardless of confidence
+
+    :param mode: view mode
+    :param confidence: The confidence of OCR text detection
+
+    """
+
+    conf_thresh=None
+    color=None
+    
+    if mode ==1:
+        conf_thresh=75#only boxes with confidence greater than 75
+        color=(0,255,0)
+
+    if mode == 2:
+        conf_thresh=0  #will show every box
+        if confidence>=50:
+            color = (0,255,0)#green
+        else:
+            color=(0,0,255)#red
+
+    if mode == 3:
+        conf_thresh=0 #will show every bix
+        color = (int(float(confidence)) * 2.55, int(float(confidence)) * 2.55, 0)
         
+    if mode==4:
+        conf_thresh=0
+        color=(0,0,255)#red
 
+    return conf_thresh, color
 
+def put_ocr_boxes(boxes, frame, height, crop_width=0, crop_height=0, view_mode=1):
 
