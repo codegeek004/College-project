@@ -14,6 +14,7 @@ def tesseract_location(root):
 
     try:
         pytesseract.pytesseract.tesseract_cmd = root
+    #To be fixed this error
     except FileNotFoundError:
         print("Please check the tesseract file directory or ensure it's installed.")
         sys.exit(1)
