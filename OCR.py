@@ -187,3 +187,32 @@ def views(mode: int,confidence: int):
 
 def put_ocr_boxes(boxes, frame, height, crop_width=0, crop_height=0, view_mode=1):
 
+     """
+    Draws text bounding boxes at tesseract-specified text location. Also displays compatible (ascii) detected text
+    Note: ONLY works with the output from tesseract image_to_data(); image_to_boxes() uses a different output format
+
+    :param boxes: output tuple from tesseract image_to_data() containing text location and text string
+    :param numpy.ndarray frame: CV2 display frame destination
+    :param height: Frame height
+    :param crop_width: (Default 0) Horizontal frame crop amount if OCR was performed on a cropped frame
+    :param crop_height: (Default 0) Vertical frame crop amount if OCR was performed on a cropped frame
+    :param view_mode: View mode to specify style of bounding box
+
+   """
+
+    if view_mode not in [1, 2, 3, 4]:
+        raise Exception("A non existent view was selected. Only 1, 2 ,3 and 4 are available")
+    text='' # Initializing a string which will later be appended with the detected text
+    
+    if boxes is not None:
+ # Defends against empty data from tesseract image_to_data
+        for i, box in enumerate(boxes.splitlines())#Next 3 lines turns into a data list.
+            box = box.split()
+            if i!=0:
+                if len(box)==12:
+                    x,y,w,h = int(box[6]), int(box[7]), int(box[8]), int(box[9])
+                    conf = box[10]
+                    word = box[11]
+                    x+=crop_width
+                    y+=crop_height
+
