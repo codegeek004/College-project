@@ -312,5 +312,31 @@ def ocr_stream(crop: list[int,int], source: int=0, view_mode: int=1, language=No
 ###############---------------Main Display loop------------#########
 print("\nPUSH c TO CAPTURE AN IMAGE. PUSH q TO VIEW VIDEO STREAM\n")
 while True:
+    #Quit condition
+    pressed_key=cv2.waitKey(1) & 0xFF
+    if pressed_key == ord('q'):
+        video_stream.stop_process()
+        ocr.stop_process()
+        print("OCR stream stopped")
+        print("{} image(s) captured and saved to current directory".format(captures))
+        break
+    frame = video_stream.frame# Grabs the most recent frame read by the VideoStream class
+
+
+
+
+######All display frame additions go here########CUSTOMIZABLE####### frame = put_rate(frame, cps1.rate())
+    frame = put_language(frame, lang_name)
+    frame = put_crop_box(frame, img_wi, img_hi, cropx, cropy)
+    frame, text = put_ocr_boxes(ocr.boxes, frame, img_hi,
+                                    crop_width=cropx, crop_height=cropy, view_mode=view_mode)
     
+
+    # Photo capture:
+   if pressed_key == ord('c'):
+        print('\n' + text)
+        captures = capture_image(frame, captures)
+
+    cv2.imshow("realtime OCR", frame)
+    cps1.increment()#Incrementation for rate counter
 
