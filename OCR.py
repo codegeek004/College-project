@@ -228,6 +228,19 @@ def put_ocr_boxes(boxes, frame, height, crop_width=0, crop_height=0, view_mode=1
 
     return frame, text
 
+def put_crop_box(frame: numpy.ndarray, width: int, height: int, crop_width: int, crop_height: int):
+    """Simply draws a rectangle over the frame with specified height and width to show a crop zone
+
+    :param numpy.ndarray frame: CV2 display frame for crop-box destination
+    :param int width: Width of the CV2 frame
+    :param int height: Height of the CV2 frame
+    :param int crop_width: Horizontal crop amount
+    :param int crop_height: Vertical crop amount
+    """
+    cv2.rectangle(frame, (crop_width, crop_height), (width-crop_width, height-crop_height), (255,0,0), thickness=1)
+    return frame
+
+def put_rate(frame: numpy.ndarray, rate: float) ->numpy.ndarray:
 
 
 
