@@ -5,7 +5,7 @@ from datetime import datetime
 import time
 import threading 
 from threading import Thread
-import cv2
+import cv3
 import numpy
 import pytesseract  
 
@@ -20,24 +20,9 @@ def tesseract_location(root):
         sys.exit(1)
 
 class RateCounter:
-     """
-    Class for finding the iterations/second of a process
-    
-    `Attributes`
-        start_time: indicates when the time.perf_counter() began
-        iterations: determines number of iterations in the process
-
-    `Methods:`
-        start(): Starts a time.perf_counter() and sets it in the self.start_time attribute
-        increment(): Increases the self.iterations attribute
-        rate(): Returns the iterations/seconds
-    """
-
-    def __init__(self):
-
+    def __init__ (self):
         self.start_time = None
-        self.iteration = 0
-            
+        self.iterations = 0           
     def start(self):
         """Starts a time.perf_counter() and sets it in the self.start_time attribute"""
         self.start_time = time.perf_counter()
@@ -54,6 +39,7 @@ class RateCounter:
 
 class VideoStream:
     #Class from grabbing frames from cv2 video capture.
+    
     def __init__(self,src=0):
         self.stream = cv2.VideoCapture(src)
         (self.grabbed, self.frame)=self.stream.read()
@@ -61,7 +47,11 @@ class VideoStream:
 
     def start(self):
     # Creates a thread targeted at get(), which reads frames from CV2 VideoCapture.
-        Thread = (target=self.get, args()).start()
+ 
+
+
+
+        Thread(target=self.get, args=()).start() 
         return self
 
     def get(self):
@@ -93,7 +83,7 @@ class OCR:
 
     def start(self):
         #Creates a thread at OCR process
-        Thread(target=self.ocr, args()).start()
+        Thread(target=self.ocr, args=()).start()
         return self
     def set_exchange(self,video_stream):
         self.exchange=video_stream
@@ -147,22 +137,6 @@ def capture_image(frame, capture=0):
     return captures
 
 def views(mode: int,confidence: int):
-     """
-    View modes changes the style of text-boxing in OCR.
-
-    View mode 1: Draws boxes on text with >75 confidence level
-
-    View mode 2: Draws red boxes on low-confidence text and green on high-confidence text
-
-    View mode 3: Color changes according to each word's confidence; brighter indicates higher confidence
-
-    View mode 4: Draws a box around detected text regardless of confidence
-
-    :param mode: view mode
-    :param confidence: The confidence of OCR text detection
-
-    """
-
     conf_thresh=None
     color=None
     
@@ -188,20 +162,6 @@ def views(mode: int,confidence: int):
     return conf_thresh, color
 
 def put_ocr_boxes(boxes, frame, height, crop_width=0, crop_height=0, view_mode=1):
-
-     """
-    Draws text bounding boxes at tesseract-specified text location. Also displays compatible (ascii) detected text
-    Note: ONLY works with the output from tesseract image_to_data(); image_to_boxes() uses a different output format
-
-    :param boxes: output tuple from tesseract image_to_data() containing text location and text string
-    :param numpy.ndarray frame: CV2 display frame destination
-    :param height: Frame height
-    :param crop_width: (Default 0) Horizontal frame crop amount if OCR was performed on a cropped frame
-    :param crop_height: (Default 0) Vertical frame crop amount if OCR was performed on a cropped frame
-    :param view_mode: View mode to specify style of bounding box
-
-   """
-
     if view_mode not in [1, 2, 3, 4]:
         raise Exception("A non existent view was selected. Only 1, 2 ,3 and 4 are available")
     text='' # Initializing a string which will later be appended with the detected text

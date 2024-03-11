@@ -71,7 +71,7 @@ def main():
     if __name__ == '__main__':
         main()
 
-
+        app.run(debug=True)
 
     # tess_path = '/usr/local/Cellar/tesseract/4.1.1/bin/tesseract' 
     # view_mode = 1
