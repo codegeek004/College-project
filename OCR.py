@@ -5,7 +5,7 @@ from datetime import datetime
 import time
 import threading 
 from threading import Thread
-import cv3
+import cv2
 import numpy
 import pytesseract  
 
@@ -168,7 +168,7 @@ def put_ocr_boxes(boxes, frame, height, crop_width=0, crop_height=0, view_mode=1
     
     if boxes is not None:
  # Defends against empty data from tesseract image_to_data
-        for i, box in enumerate(boxes.splitlines())#Next 3 lines turns into a data list.
+        for i, box in enumerate(boxes.splitlines()):#Next 3 lines turns into a data list.
             box = box.split()
             if i!=0:
                 if len(box)==12:
@@ -226,31 +226,9 @@ def put_language(frame: numpy.ndarray, language_string: str)->numpy.ndarray:
     return frame
 
 def ocr_stream(crop: list[int,int], source: int=0, view_mode: int=1, language=None):
-    """
-    Begins the video stream and text OCR in two threads, then shows the video in a CV2 frame with the OCR
-    boxes overlaid in real-time.
-
-    When viewing the real-time video stream, push 'c' to capture a still image, push 'q' to quit the view session
-
-    :param list[int, int] crop: A two-element list with width, height crop amount in pixels. [0, 0] indicates no crop
-    :param source: SRC video source (defaults to 0) for CV2 video capture.
-    :param int view_mode: There are 4 possible view modes that control how the OCR boxes are drawn over text:
-
-        mode 1: (Default) Draws boxes on text with >75 confidence level
-
-        mode 2: Draws red boxes on low-confidence text and green on high-confidence text
-
-        mode 3: Color changes according to each word's confidence; brighter indicates higher confidence
-
-        mode 4: Draws a box around all detected text regardless of confidence
-
-    :param str language: ISO 639-2/T language code to specify OCR language. Multiple langs can be appended with '+'
-        Defaults to None, which will perform OCR in English.
-
-    """
     captures=0 # Number of still image captures during view session
     video_stream=VideoStream(source).start()# Starts reading the video stream in dedicated thread
-    img_wi, img hi=video_stream.get_video_dimensions()
+    img_wi, img_hi = video_stream.get_video_dimensions()
     if crop is None:
         cropx, cropy=(200,200)
     else:
@@ -288,14 +266,13 @@ while True:
 ######All display frame additions go here########CUSTOMIZABLE####### frame = put_rate(frame, cps1.rate())
     frame = put_language(frame, lang_name)
     frame = put_crop_box(frame, img_wi, img_hi, cropx, cropy)
-    frame, text = put_ocr_boxes(ocr.boxes, frame, img_hi,
-                                    crop_width=cropx, crop_height=cropy, view_mode=view_mode)
+    frame, text = put_ocr_boxes(ocr.boxes, frame, img_hi, crop_width=cropx, crop_height=cropy, view_mode=view_mode)
     
 
     # Photo capture:
-   if pressed_key == ord('c'):
-        print('\n' + text)
-        captures = capture_image(frame, captures)
+    if pressed_key == ord('c'):
+       print('\n' + text)
+       captures = capture_image(frame, captures)
 
     cv2.imshow("realtime OCR", frame)
     cps1.increment()#Incrementation for rate counter
