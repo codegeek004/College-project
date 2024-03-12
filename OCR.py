@@ -8,7 +8,7 @@ from threading import Thread
 import cv2
 import numpy
 import pytesseract  
-
+import Linguist
 def tesseract_location(root):
     """Set the cmd root and exits if the root is not correctly set"""
 
@@ -263,7 +263,8 @@ while True:
 
 
 
-######All display frame additions go here########CUSTOMIZABLE####### frame = put_rate(frame, cps1.rate())
+######All display frame additions go here########CUSTOMIZABLE#######
+    frame = put_rate(frame, cps1.rate())
     frame = put_language(frame, lang_name)
     frame = put_crop_box(frame, img_wi, img_hi, cropx, cropy)
     frame, text = put_ocr_boxes(ocr.boxes, frame, img_hi, crop_width=cropx, crop_height=cropy, view_mode=view_mode)
