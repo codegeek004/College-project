@@ -11,7 +11,7 @@ import pytesseract
 import Linguist
 def tesseract_location(root):
     """Set the cmd root and exits if the root is not correctly set"""
-
+#hello
     try:
         pytesseract.pytesseract.tesseract_cmd = root
     #To be fixed this error
