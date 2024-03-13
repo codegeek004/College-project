@@ -1,7 +1,8 @@
 import argparse 
 import os
- 
+import OCR 
 import Linguist
+from numpy import required
 
 def main():
     """

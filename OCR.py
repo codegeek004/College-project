@@ -5,9 +5,11 @@ from datetime import datetime
 import time
 import threading 
 from threading import Thread
+
 import cv2
 import numpy
 import pytesseract  
+
 import Linguist
 def tesseract_location(root):
     """Set the cmd root and exits if the root is not correctly set"""
@@ -30,7 +32,7 @@ class RateCounter:
 
     def increment(self):
         """Increments self.iterations attribute"""
-        sel.iteration += 1
+        self.iterations += 1
 
     def rate(self):
         """Returns the iterations per seconds"""
@@ -47,10 +49,6 @@ class VideoStream:
 
     def start(self):
     # Creates a thread targeted at get(), which reads frames from CV2 VideoCapture.
- 
-
-
-
         Thread(target=self.get, args=()).start() 
         return self
 
@@ -62,7 +60,7 @@ class VideoStream:
     def get_video_dimensions(self):
         #get the dimensions of the video frame
         width=self.stream.get(cv2.CAR_PROP_FRAME_WIDTH)
-        height=self.stream.get(cv2.CAR_PROP_FRAME_WIDTH)
+        height=self.stream.get(cv2.CAR_PROP_FRAME_HEIGHT)
         return int(width), int(height)
     def stop_process(self):
         self.stopped=True
@@ -85,7 +83,7 @@ class OCR:
         #Creates a thread at OCR process
         Thread(target=self.ocr, args=()).start()
         return self
-    def set_exchange(self,video_stream):
+    def set_exchange(self, video_stream):
         self.exchange=video_stream
         #Sets the self.exchange attribute with a reference to VideoStream class
 
@@ -96,7 +94,7 @@ class OCR:
 
     def ocr(self):
         while not self.stopped:
-            if self.exchange is None:
+            if self.exchange is not None:
                 frame=self.exchange.frame
                 frame=cv2.cvtColor(frame,cv2.COLOR_RGB2GRAY)
                 frame=frame[self.crop_height:(self.height-self.crop_height), self.crop_width:(self.width-self.crop_width)]
@@ -169,7 +167,7 @@ def put_ocr_boxes(boxes, frame, height, crop_width=0, crop_height=0, view_mode=1
     if boxes is not None:
  # Defends against empty data from tesseract image_to_data
         for i, box in enumerate(boxes.splitlines()):#Next 3 lines turns into a data list.
-            box = box.split()
+            box = box.split()   
             if i!=0:
                 if len(box)==12:
                     x,y,w,h = int(box[6]), int(box[7]), int(box[8]), int(box[9])
@@ -240,7 +238,7 @@ def ocr_stream(crop: list[int,int], source: int=0, view_mode: int=1, language=No
     ocr = OCR().start()#starts optical recognition in dedicated thread
     print("OCR stream started")
     print("Active threads: {}".format(threading.activeCount()))
-    ocr.set_exchange(video_stream)
+    ocr.set_exchange(videostream)
     ocr.set_language(language)
     ocr.set_dimensions(img_wi, img_hi, cropx, cropy)
     cps1=RateCounter().start()
@@ -253,7 +251,7 @@ while True:
     #Quit condition
     pressed_key=cv2.waitKey(1) & 0xFF
     if pressed_key == ord('q'):
-        video_stream.stop_process()
+        videostream.stop_process()
         ocr.stop_process()
         print("OCR stream stopped")
         print("{} image(s) captured and saved to current directory".format(captures))
