@@ -238,7 +238,7 @@ def ocr_stream(crop: list[int,int], source: int=0, view_mode: int=1, language=No
     ocr = OCR().start()#starts optical recognition in dedicated thread
     print("OCR stream started")
     print("Active threads: {}".format(threading.activeCount()))
-    ocr.set_exchange(videostream)
+    ocr.set_exchange(video_stream)
     ocr.set_language(language)
     ocr.set_dimensions(img_wi, img_hi, cropx, cropy)
     cps1=RateCounter().start()
@@ -251,7 +251,7 @@ while True:
     #Quit condition
     pressed_key=cv2.waitKey(1) & 0xFF
     if pressed_key == ord('q'):
-        videostream.stop_process()
+        video_stream.stop_process()
         ocr.stop_process()
         print("OCR stream stopped")
         print("{} image(s) captured and saved to current directory".format(captures))
