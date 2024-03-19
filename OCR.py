@@ -44,20 +44,20 @@ class VideoStream:
         (self.grabbed, self.frame) = self.stream.read()
         self.stopped = False
 
-    def start(self):
+   def start(self):
        Thread(target=self.get, args=()).start()
-        return self
+       return self
 
-    def get(self):
+   def get(self):
        while not self.stopped:
             (self.grabbed, self.frame) = self.stream.read()
 
-    def get_video_dimensions(self):
+   def get_video_dimensions(self):
        width = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
-        height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        return int(width), int(height)
+       height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
+       return int(width), int(height)
 
-    def stop_process(self):
+   def stop_process(self):
        self.stopped = True
 
 

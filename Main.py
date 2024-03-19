@@ -25,7 +25,7 @@ def main():
     #Required
     requiredNamed = parser.add_argument_group('required named arguments')
 
-    required.add_argument('-t','--tess_path',
+    requiredNamed.add_argument('-t','--tess_path',
                           help = 'path to the cmd root of the tesseract',
                           metavar='', required = True)
 
@@ -37,11 +37,11 @@ def main():
     
     parser.add_argument('-v','--view', 
                         help = 'view mode for OCR boxes display',
-                        deafault=1, type = int, metavar = '')
+                        default=1, type = int, metavar = '')
     
     parser.add_argument('-sv','--show_views',
                         help = 'show the available view modes',
-                        action = 'store_true')
+                        action = 'store_true',default='False')
     
     parser.add_argument('-l','--language',
                         help = 'code for tesseract language',
@@ -49,7 +49,7 @@ def main():
     
     parser.add_argument("-sl", "--show_langs", 
                         help="show list of tesseract (4.0+) supported langs",
-                        action="store_true")
+                        action="store_true",default='False')
 
     parser.add_argument("-s", "--src", 
                          help="SRC video source for video capture",
@@ -71,6 +71,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 

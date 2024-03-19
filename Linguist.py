@@ -11,7 +11,7 @@ def supported_langs_file():
 def get_language_from_code(code):
     file = supported_langs_file()   
     l_dict = {}
-    with open(file,'r') as f:
+    with open(file,'r') as file:
         reader = csv.reader(file,delimiter='\t')
         for el in reader:
             key = el[0]
@@ -29,7 +29,7 @@ def show_codes():
 
     file = supported_langs_file()
 
-    with open(file,'r') as f:
+    with open(file,'r') as file:
         reader = csv.reader(file,delimiter='\t')
         print("{:<20s}{:<40s}".format("CODE","LANGUAGE"))
         for el in reader:
@@ -38,7 +38,7 @@ def show_codes():
 def language_string(language):
     """Generate a string containing a full language name given its code as used in the OCR process"""
 
-    if language is None:
+    if language is not None:
         name_list = []
         codes = language.split('+')
         name = get_language_from_code(language)
