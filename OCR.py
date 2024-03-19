@@ -28,14 +28,14 @@ class RateCounter:
 
     def start(self):
        self.start_time = time.perf_counter()
-        return self
+       return self
 
     def increment(self):
        self.iterations += 1
 
     def rate(self):
        elapsed_time = (time.perf_counter() - self.start_time)
-        return self.iterations / elapsed_time
+       return self.iterations / elapsed_time
 
 
 class VideoStream:
